@@ -1,0 +1,175 @@
+local lastnumber = string.sub(script.Name, 11, string.len(script.Name))
+local new = script.Parent.Parent.Objectives.Objectives["Objective"..lastnumber]
+local complete = script.Parent.Parent.Objectives.Objectives["Objective"..lastnumber]
+
+function QuestStart()
+	local success, errormessage = pcall(function()
+		game.Workspace.SoundObjective.StartQuestSound:Play()
+		
+		local neverchangeobjective = script.Parent.Parent.Objectives.ObjTextCenter.ObjTextCenter
+		
+		local objectivetextlogocenter = script.Parent.Parent.Objectives.ObjCenter.ObjCenterImage
+		local objectivetextlogo = script.Parent.Parent.Objectives.RightObj
+		
+		local info = TweenInfo.new(1)
+		
+		local tween1 = game:GetService("TweenService"):Create(neverchangeobjective, info, {TextTransparency= 0})
+		local tween2 = game:GetService("TweenService"):Create(objectivetextlogocenter, info, {ImageTransparency= 0})
+		
+		tween1:Play()
+		tween2:Play()
+		
+		objectivetextlogocenter:TweenPosition(
+			UDim2.new(0,0,0,0),
+			Enum.EasingDirection.Out,
+			Enum.EasingStyle.Quad,
+			2,
+			true,
+			nil
+		)
+		
+		neverchangeobjective:TweenPosition(
+			UDim2.new(0,0,0,0),
+			Enum.EasingDirection.Out,
+			Enum.EasingStyle.Quad,
+			3,
+			true,
+			nil
+		)
+		
+		wait(2)
+		
+		local TweenService = game:GetService("TweenService")
+		local goal = {ImageColor3 = Color3.fromRGB(255,0,0)}
+		local tweencolor = TweenService:Create(objectivetextlogocenter, info, goal)
+		tweencolor:Play()
+		
+		wait(2)
+		
+		objectivetextlogocenter:TweenPosition(
+			UDim2.new(0,0,-1,0),
+			Enum.EasingDirection.Out,
+			Enum.EasingStyle.Quad,
+			2,
+			true,
+			nil
+		)
+		
+		neverchangeobjective:TweenPosition(
+			UDim2.new(0,0,0,0),
+			Enum.EasingDirection.Out,
+			Enum.EasingStyle.Quad,
+			3,
+			true,
+			nil
+		)
+		
+		wait(0.3)
+		
+		local tween1 = game:GetService("TweenService"):Create(neverchangeobjective, info, {TextTransparency= 1})
+		local tween2 = game:GetService("TweenService"):Create(objectivetextlogocenter, info, {ImageTransparency= 1})
+		
+		tween1:Play()
+		tween2:Play()
+		
+		wait(1)
+		
+		game.Workspace.SoundObjective.EndQuestSound:Play()
+		
+		local tweencolor2 = TweenService:Create(objectivetextlogo, info, goal)
+		tweencolor2:Play()
+		
+		local WillTween = new.Icon:TweenSize(
+			UDim2.new(0.125,0,0.45,0),
+			Enum.EasingDirection.Out,
+			Enum.EasingStyle.Quad,
+			0.1,
+			true,
+			nil
+		)
+		print(new:GetFullName())
+		new.Objective:TweenPosition(
+			UDim2.new(0,0,0,0),
+			Enum.EasingDirection.Out,
+			Enum.EasingStyle.Quad,
+			3,
+			true,
+			nil
+		)
+		
+		wait(2)
+		
+		local goal2 = {ImageColor3 = Color3.fromRGB(255,255,255)}
+		local tweencolor2 = TweenService:Create(objectivetextlogo, info, goal2)
+		tweencolor2:Play()
+		coroutine.wrap(function()
+			tweencolor2.Completed:Wait()
+			game.ReplicatedStorage.Objectives["Objective"..lastnumber.."End"]:FireServer()
+		end)()
+		
+		objectivetextlogocenter.ImageColor3 = Color3.fromRGB(255,255,255)
+		neverchangeobjective.Position = UDim2.new(0,0,1,0)
+		objectivetextlogocenter.Position = UDim2.new(0,0,1,0)
+	end)
+	if not success then
+		warn(errormessage)
+	end
+end
+
+function QuestComplete()
+	game.Workspace.SoundObjective.EndQuestSound:Play()
+	
+	local objectivetextlogo = script.Parent.Parent.Objectives.RightObj
+	
+	local info = TweenInfo.new(1)
+	
+	local TweenService =game:GetService("TweenService")
+	local goal = {ImageColor3 = Color3.fromRGB(255,0,0)}
+	local tweencolor = TweenService:Create(complete.Icon, info, goal)
+	tweencolor:Play()
+	
+	local goal2 = {ImageColor3 = Color3.fromRGB(255,0,0)}
+	local tweencolor2 = TweenService:Create(objectivetextlogo, info, goal2)
+	tweencolor2:Play()
+	
+	wait(1)
+	
+	local willtween = complete.Icon:TweenSize(
+		UDim2.new(0,0,0,0),
+		Enum.EasingDirection.In,
+		Enum.EasingStyle.Sine,
+		1,
+		true
+	)
+	
+	complete.Objective:TweenPosition(
+		UDim2.new(-1,0,0,0),
+		Enum.EasingDirection.Out,
+		Enum.EasingStyle.Quad,
+		2,
+		true,
+		nil
+	)
+	
+	wait(2)
+	
+	local goal2 = {ImageColor3 = Color3.fromRGB(255,255,255)}
+	local tweencolor2 = TweenService:Create(objectivetextlogo, info, goal2)
+	tweencolor2:Play()
+	
+	complete:Destroy()
+end
+
+local start = game.ReplicatedStorage.Objectives["Objective"..lastnumber.."Start"]
+
+start.OnClientEvent:Connect(function()
+	script.Parent.Parent.Objectives.ObjTextCenter.ObjTextCenter.Text = "Find the way Inside!."
+	new:FindFirstChild("Objective").Text = "Find the way Inside!."
+	QuestStart()
+end)
+
+local ending = game.ReplicatedStorage.Objectives["Objective"..lastnumber.."End"]
+
+ending.OnClientEvent:Connect(function()
+	QuestComplete()
+end)

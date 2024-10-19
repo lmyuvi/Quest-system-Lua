@@ -1,7 +1,7 @@
 # Quest-system-Lua
 Quest system Lua.
 How to use it:
-In your gaming engine for example Unity or unreal engine 5
+In your gaming engine for example Unity or roblox studio
 Go to workspace
 Go to starter player
 Go to starter character scripts
